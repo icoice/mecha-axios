@@ -1,4 +1,4 @@
-const MechaAxios = require('../lib').default;
+const MechaAxios = require('../lib/index.node').default;
 
 const api = new MechaAxios({
   host: 'http://api.icoice.net',

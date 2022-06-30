@@ -5,8 +5,8 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "npx webpack",
-    "build:node": "set BUILD_ENV=node && npx webpack",
-    "test": "node ./test.js"
+    "build:node": "set BUILD_ENV=node&& npx webpack",
+    "test": "node ./src/test.js"
   },
   "author": "icoice",
   "license": "ISC",

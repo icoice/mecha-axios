@@ -2,10 +2,8 @@
 const path = require('path');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 
-console.log(process.env.BUILD_ENV);
-
 module.exports = {
-    target: 'node',
+    target: process.env.BUILD_ENV || 'web',
     mode: 'production',
     entry: {
         main: './src/index.js',
@@ -13,7 +11,7 @@ module.exports = {
     output: {
         path: path.resolve(process.cwd(), './lib'),
         clean: false,
-        filename: 'index.js',
+        filename: `index${process.env.BUILD_ENV ? `.${process.env.BUILD_ENV}` : ''}.js`,
         library: {
             type: 'commonjs2',
         },
