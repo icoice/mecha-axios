@@ -105,7 +105,6 @@ export default class AxiosInterlayer {
     } = this;
     const { name, method, path, fake, paramMap } = item;
     const apiRequest = payload => {
-      console.error(AbortController);
       const abort = new AbortController();
       const space = {
         abort
