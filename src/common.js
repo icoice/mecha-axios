@@ -13,4 +13,3 @@ export const def = (v, d) => is(v, 'undefined') ? d : v;
 export const loop = (v, cb = () => {}) => Object.entries(v).map(([k, v]) => cb(v, k));
 export const empty = v => (v === '' || v === null || JSON.stringify(v) === '{}' || JSON.stringify(v) === '[]' || is(v, 'undefined'));
   
-  

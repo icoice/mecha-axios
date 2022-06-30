@@ -117,5 +117,3 @@ api.getUserAge();
 console.log('---------- \n');
 api.getUserDetail({ id: '7649', type: 'trace', date: Date.now() }, { pathParam: ['id', 'type'] });
 console.log('---------- \n');
-  
-console.log(api);

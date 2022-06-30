@@ -2,7 +2,10 @@
 const path = require('path');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 
+console.log(process.env.BUILD_ENV);
+
 module.exports = {
+    target: 'node',
     mode: 'production',
     entry: {
         main: './src/index.js',

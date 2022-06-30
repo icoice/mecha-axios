@@ -5,13 +5,15 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "npx webpack",
+    "build:node": "set BUILD_ENV=node && npx webpack",
     "test": "node ./test.js"
   },
   "author": "icoice",
   "license": "ISC",
   "dependencies": {
     "abort-controller": "^3.0.0",
-    "axios": "^0.27.2"
+    "axios": "^0.27.2",
+    "form-data": "^4.0.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.18.6",

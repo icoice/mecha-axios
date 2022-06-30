@@ -1,5 +1,6 @@
 import axios from 'axios';
-import AbortController from 'abort-controller';
+import AbortController from 'abort-controller/dist/abort-controller.mjs';
+import FormDataNode from 'form-data';
 import { def, is } from './common';
 
 export default class AxiosInterlayer {
@@ -30,7 +31,7 @@ export default class AxiosInterlayer {
     fakeDelay,
     list,
   }) {
-    // base
+    // 基础属性
     this.host = def(host, '');
     this.list = def(list, []);
     this.sendee = def(sendee, null);
@@ -42,7 +43,7 @@ export default class AxiosInterlayer {
     this.timeout = def(timeout, 0);
     this.proxy = def(proxy, null);
 
-    // callback
+    // 回调事件
     this.onBuildPayloadBefore = def(onBuildPayloadBefore, params => params);
     this.onBuildPayloadAfter = def(onBuildPayloadAfter, params => params);
     this.sendBefore = def(sendBefore, params => params);
@@ -52,7 +53,7 @@ export default class AxiosInterlayer {
     this.onUploadProgress = def(onUploadProgress, null);
     this.onDownloadProgress = def(onDownloadProgress, null);
 
-    // fake
+    // 模拟数据设置
     this.isFake = def(isFake, false);
     this.fakeCallBack = def(fakeCallBack, params => params);
     this.fakeDelay = def(fakeDelay, 80);
@@ -62,7 +63,7 @@ export default class AxiosInterlayer {
 
   // 自动选择content-type
   autoContentType(data) {
-    if (is(data, FormData)) return 'multipart/form-data';
+    if (is(data, typeof window === 'undefined' ? FormDataNode : FormData)) return 'multipart/form-data';
     if (is(data, Array)) return 'application/json';
     if (is(data, 'object')) return 'application/json';
     if (is(data, 'string')) return 'text/plain';
@@ -88,6 +89,7 @@ export default class AxiosInterlayer {
     return apiMap;
   }
 
+  // 构建接口
   buildRequest(item) {
     const {
       sendee,
