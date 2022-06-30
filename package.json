@@ -1,7 +1,7 @@
 {
   "name": "mecha-axios",
   "version": "0.1.0",
-  "description": "axios extend",
+  "description": "global api",
   "main": "lib/index.js",
   "scripts": {
     "build": "npx webpack",
