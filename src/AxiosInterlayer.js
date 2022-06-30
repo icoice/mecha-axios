@@ -125,7 +125,7 @@ export default class AxiosInterlayer {
 
         return axios(payload)
           .then(response => this.sendSuccess(response))
-          .catch(error => this.sendFail(error));
+          .catch(error => Promise.reject(this.sendFail(error)));
       }
 
       if (!is(sendee, 'promise') && !is(sendee, 'function')) {
@@ -137,15 +137,15 @@ export default class AxiosInterlayer {
 
         return sendee(payload)
           .then(response => this.sendSuccess(response))
-          .catch(error => this.sendFail(error));
+          .catch(error => Promise.reject(this.sendFail(error)));
       }
 
       if (is(sendee, 'function')) {
         sendee.$space = space;
 
         return sendee(payload, {
-          sendSuccess: this.sendSuccess,
-          sendFail: this.sendFail,
+          sendSuccess: (...args) => this.sendSuccess.apply(this, args),
+          sendFail: (...args) => this.sendFail.apply(this, args),
           space,
         });
       }
