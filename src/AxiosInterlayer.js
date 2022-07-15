@@ -113,10 +113,12 @@ export default class AxiosInterlayer {
       payload.signal = abort.signal;
 
       // 是否使用虚假数据
-      if (!is(fake, null) && isFake) { 
+      if (!is(fake, null) && !is(fake, 'undefined') && isFake) {
         return new Promise(resolve => {
-          setTimeout(() => resolve(fakeCallBack(fake, { name, ...item })), fakeDelay);
-        });
+            setTimeout(() => resolve(fakeCallBack(fake, { name, ...item })), fakeDelay);
+          })
+          .then(response => this.sendSuccess(response))
+          .catch(error => Promise.reject(this.sendFail(error)));
       }
 
       // 是否替换发送对象, 否则默认使用axios
