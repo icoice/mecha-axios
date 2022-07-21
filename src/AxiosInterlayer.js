@@ -106,16 +106,18 @@ export default class AxiosInterlayer {
     const { name, method, path, fake, paramMap } = item;
     const apiRequest = payload => {
       const abort = new AbortController();
-      const space = {
-        abort
-      };
+      const space = { abort };
+      let fakeResposne = '';
 
       payload.signal = abort.signal;
 
       // 是否使用虚假数据
       if (!is(fake, null) && !is(fake, 'undefined') && isFake) {
         return new Promise(resolve => {
-            setTimeout(() => resolve(fakeCallBack(fake, { name, ...item })), fakeDelay);
+            setTimeout(() => resolve(fakeCallBack(
+              // 当fake是函数时，执行fake并返回报文（哪怕报文本身就是函数也在函数内返回）
+              is(fake, 'function') ? fake(payload) : fake, { name, ...item })),
+              fakeDelay);
           })
           .then(response => this.sendSuccess(response))
           .catch(error => Promise.reject(this.sendFail(error)));
