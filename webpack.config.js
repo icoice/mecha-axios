@@ -3,7 +3,7 @@ const path = require('path');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 
 module.exports = {
-    target: process.env.BUILD_ENV || 'web',
+    target: ['node'].includes(process.env.BUILD_ENV) ? 'node' : 'web',
     mode: 'production',
     entry: {
         main: './src/index.js',
@@ -11,9 +11,10 @@ module.exports = {
     output: {
         path: path.resolve(process.cwd(), './lib'),
         clean: false,
-        filename: `index${process.env.BUILD_ENV ? `.${process.env.BUILD_ENV}` : ''}.js`,
+        filename: `index${process.env.BUILD_ENV || process.env.PACK_TYPE ? `.${process.env.BUILD_ENV || process.env.PACK_TYPE}` : ''}.js`,
         library: {
-            type: 'commonjs2',
+            name: 'MechaAxios',
+            type: !process.env.PACK_TYPE ? 'umd' : process.env.PACK_TYPE,
         },
     },
     externalsPresets: { node: true },

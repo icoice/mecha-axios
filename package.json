@@ -6,6 +6,8 @@
   "scripts": {
     "build": "npx webpack",
     "build:node": "set BUILD_ENV=node&& npx webpack",
+    "build:commonjs2": "set PACK_TYPE=commonjs2&& npx webpack",
+    "build:window": "set PACK_TYPE=window&& npx webpack",
     "test": "node ./src/test.js"
   },
   "author": "icoice",
