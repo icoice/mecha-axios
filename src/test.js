@@ -12,11 +12,11 @@ const api = new MechaAxios({
   },
   onBuildPayloadBefore(payload) {
     console.log('onBuildPayloadBefore:', payload);
-    return payload; 
+    return payload;
   },
   onBuildPayloadAfter(payload) {
     console.log('onBuildPayloadAfter:', payload);
-    return payload; 
+    return payload;
   },
   sendBefore(payload) {
     return new Promise(resolve => {
@@ -73,7 +73,7 @@ const api = new MechaAxios({
       name: 'getUserDetail',
       method: 'POST',
       path: '/get/user/:${id}/detail/:${type}',
-      paramMap: ['id', 'type', 'date'],
+      paramMap: ['id', 'type', 'date', { name: 'pid', default: 1, type: 'query' }],
       fake: {
         code: 500,
         message: 'fail',

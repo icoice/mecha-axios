@@ -114,11 +114,11 @@ export default class AxiosInterlayer {
       // 是否使用虚假数据
       if (!is(fake, null) && !is(fake, 'undefined') && isFake) {
         return new Promise(resolve => {
-            setTimeout(() => resolve(fakeCallBack(
-              // 当fake是函数时，执行fake并返回报文（哪怕报文本身就是函数也在函数内返回）
-              is(fake, 'function') ? fake(payload) : fake, { name, ...item })),
-              fakeDelay);
-          })
+          setTimeout(() => resolve(fakeCallBack(
+            // 当fake是函数时，执行fake并返回报文（哪怕报文本身就是函数也在函数内返回）
+            is(fake, 'function') ? fake(payload) : fake, { name, ...item })),
+            fakeDelay);
+        })
           .then(response => this.sendSuccess(response))
           .catch(error => Promise.reject(this.sendFail(error)));
       }
@@ -208,6 +208,7 @@ export default class AxiosInterlayer {
   }) {
     const { host, needParamMap } = this;
     const ContentType = this.autoContentType(data);
+    const paramMapJson = {};
     let headers = this.setHeader({ 'Content-Type': ContentType });
     let payloadData = data;
     let nextPath = path;
@@ -227,6 +228,15 @@ export default class AxiosInterlayer {
     payloadData = this.resetPayloadData(payloadData, paramMap);
     payloadData = this.onBuildPayloadAfter(payloadData);
 
+    // 参数描述
+    paramMap.forEach(param => {
+      if (is(param, 'object')) {
+        paramMapJson[param.name] = param;
+      } else {
+        paramMapJson[param] = { name: param };
+      }
+    })
+
     if (is(payloadData, 'promise')) payloadData = await payloadData;
 
     // 需支持String、FormData
@@ -242,7 +252,7 @@ export default class AxiosInterlayer {
       if (!['GET', 'PUT', 'DELETE'].includes(method)) sendQuery = [];
       if (!['POST'].includes(method)) sendBody = [];
     }
-    
+
     // 对象类型
     if (is(payloadData, 'object')) {
       sendQuery = { ...payloadData };
@@ -251,6 +261,23 @@ export default class AxiosInterlayer {
       // 依据协议方法选择报文通道
       if (!['GET', 'PUT', 'DELETE'].includes(method)) sendQuery = {};
       if (!['POST'].includes(method)) sendBody = {};
+
+      // 参数描述（优先级较低）
+      Object.entries(payloadData).forEach(([key, v]) => {
+        const param = paramMapJson[key];
+
+        if (is(param, 'object') && param.type === 'body') {
+          sendBody[key] = v;
+
+          delete sendQuery[key];
+        }
+
+        if (is(param, 'object') && param.type === 'query') {
+          sendQuery[key] = v;
+
+          delete sendBody[key];
+        }
+      });
 
       // 路径参数（restful）
       if (is(pathParam, 'array')) {
@@ -266,6 +293,8 @@ export default class AxiosInterlayer {
       if (is(query, 'array')) {
         query.forEach(key => {
           sendQuery[key] = payloadData[key];
+
+          delete sendBody[key];
         });
       }
 
@@ -273,6 +302,8 @@ export default class AxiosInterlayer {
       if (is(body, 'array')) {
         body.forEach(key => {
           sendBody[key] = payloadData[key];
+
+          delete sendQuery[key];
         });
       }
     }
@@ -303,7 +334,7 @@ export default class AxiosInterlayer {
       paramMap.forEach(param => {
         if (is(param, 'object')) {
           nextData[param.name] = param.default || paramsSetDefaultValue;
-  
+
           return param;
         }
 
@@ -322,7 +353,7 @@ export default class AxiosInterlayer {
       if (!is(param, 'object')) {
         if (paramsSetDefault && is(data[param], 'undefined')) {
           nextData[param] = paramsSetDefaultValue;
-        } else if(!is(data[param], 'undefined')) {
+        } else if (!is(data[param], 'undefined')) {
           nextData[param] = data[param];
         }
 
