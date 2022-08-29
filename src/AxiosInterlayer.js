@@ -224,9 +224,7 @@ export default class AxiosInterlayer {
     if (is(payloadData, 'promise')) payloadData = await payloadData;
 
     // 处理请求报文
-    console.log('RESET BEFORE', payloadData);
     payloadData = this.resetPayloadData(payloadData, paramMap);
-    console.log('RESET', payloadData);
     payloadData = this.onBuildPayloadAfter(payloadData);
 
     // 参数描述
@@ -253,8 +251,6 @@ export default class AxiosInterlayer {
       if (!['GET', 'PUT', 'DELETE'].includes(method)) sendQuery = [];
       if (!['POST'].includes(method)) sendBody = [];
     }
-
-    console.log(payloadData);
 
     // 对象类型
     if (is(payloadData, File)) {
