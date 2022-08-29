@@ -107,7 +107,6 @@ export default class AxiosInterlayer {
     const apiRequest = payload => {
       const abort = new AbortController();
       const space = { abort };
-      let fakeResposne = '';
 
       payload.signal = abort.signal;
 
@@ -225,7 +224,9 @@ export default class AxiosInterlayer {
     if (is(payloadData, 'promise')) payloadData = await payloadData;
 
     // 处理请求报文
+    console.log('RESET BEFORE', payloadData);
     payloadData = this.resetPayloadData(payloadData, paramMap);
+    console.log('RESET', payloadData);
     payloadData = this.onBuildPayloadAfter(payloadData);
 
     // 参数描述
@@ -253,8 +254,13 @@ export default class AxiosInterlayer {
       if (!['POST'].includes(method)) sendBody = [];
     }
 
+    console.log(payloadData);
+
     // 对象类型
-    if (is(payloadData, 'object')) {
+    if (is(payloadData, File)) {
+      sendBody = payloadData;
+      sendQuery = {};
+    } else if (is(payloadData, 'object')) {
       sendQuery = { ...payloadData };
       sendBody = { ...payloadData };
 
@@ -329,6 +335,8 @@ export default class AxiosInterlayer {
     const { paramsSetDefault, paramsSetDefaultValue } = this;
     const nextData = {};
 
+    if (is(data, File)) return data;
+
     // 当报文参数为undefined且paramMap被定义内容时
     if (paramsSetDefault && is(data, 'undefined') && is(paramMap, 'array') && paramMap.length > 0) {
       paramMap.forEach(param => {
@@ -344,9 +352,7 @@ export default class AxiosInterlayer {
       return nextData;
     }
 
-    if (!is(data, 'object') || !is(paramMap, 'array')) {
-      return data;
-    }
+    if (!is(data, 'object') || !is(paramMap, 'array')) return data;
 
     // data为object时
     paramMap.forEach(param => {
