@@ -12,6 +12,7 @@ export default class AxiosInterlayer {
     host,
     proxy,
     sendee,
+    rejectSend,
     paramsSetDefault,
     paramsSetDefaultValue,
     needParamMap,
@@ -54,6 +55,7 @@ export default class AxiosInterlayer {
     this.onUploadProgress = def(onUploadProgress, null);
     this.onDownloadProgress = def(onDownloadProgress, null);
     this.onExtractPayload = def(onExtractPayload, params => params);
+    this.rejectSend = def(rejectSend, () => false);
 
     // 模拟数据设置
     this.isFake = def(isFake, false);
@@ -104,6 +106,7 @@ export default class AxiosInterlayer {
       onUploadProgress,
       onDownloadProgress,
       onExtractPayload,
+      rejectSend,
       proxy,
     } = this;
     const { name, method, path, fake, paramMap } = item;
@@ -112,6 +115,11 @@ export default class AxiosInterlayer {
       const space = { abort };
 
       payload.signal = abort.signal;
+
+      // 依据条件拒绝发送
+      if (rejectSend(payload)) {
+          return Promise.reject(new Error('Reject Api Send'));
+      }
 
       // 是否使用虚假数据
       if (!is(fake, null) && !is(fake, 'undefined') && isFake) {
