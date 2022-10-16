@@ -22,6 +22,7 @@ export default class AxiosInterlayer {
     responseEncoding,
     onUploadProgress,
     onDownloadProgress,
+    onExtractPayload,
     sendBefore,
     sendSuccess,
     sendFail,
@@ -52,6 +53,7 @@ export default class AxiosInterlayer {
     this.setHeader = def(processHeaders, params => params);
     this.onUploadProgress = def(onUploadProgress, null);
     this.onDownloadProgress = def(onDownloadProgress, null);
+    this.onExtractPayload = def(onExtractPayload, params => params);
 
     // 模拟数据设置
     this.isFake = def(isFake, false);
@@ -101,6 +103,7 @@ export default class AxiosInterlayer {
       responseEncoding,
       onUploadProgress,
       onDownloadProgress,
+      onExtractPayload,
       proxy,
     } = this;
     const { name, method, path, fake, paramMap } = item;
@@ -164,7 +167,7 @@ export default class AxiosInterlayer {
         paramMap,
         query,
         body,
-        data,
+        data: onExtractPayload(data),
       });
 
       // 公共上传进度
