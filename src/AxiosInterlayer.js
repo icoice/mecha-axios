@@ -290,6 +290,13 @@ export default class AxiosInterlayer {
 
           delete sendBody[key];
         }
+
+        if (is(param, 'object') && param.type === 'path') {
+            nextPath = nextPath.replace(new RegExp(`:\\$\\{${key}\\}`, 'g'), data[key]);
+
+            delete sendBody[key];
+            delete sendQuery[key];
+        }
       });
 
       // 路径参数（restful）
