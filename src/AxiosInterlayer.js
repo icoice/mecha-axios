@@ -259,8 +259,8 @@ export default class AxiosInterlayer {
       sendBody = [...payloadData];
 
       // 依据协议方法选择报文通道
-      if (!['GET', 'PUT', 'DELETE'].includes(method)) sendQuery = [];
-      if (!['POST'].includes(method)) sendBody = [];
+      if (!['GET', 'DELETE'].includes(method)) sendQuery = [];
+      if (!['POST', 'PUT'].includes(method)) sendBody = [];
     }
 
     // 对象类型
@@ -272,8 +272,8 @@ export default class AxiosInterlayer {
       sendBody = { ...payloadData };
 
       // 依据协议方法选择报文通道
-      if (!['GET', 'PUT', 'DELETE'].includes(method)) sendQuery = {};
-      if (!['POST'].includes(method)) sendBody = {};
+      if (!['GET', 'DELETE'].includes(method)) sendQuery = {};
+        if (!['POST', 'PUT'].includes(method)) sendBody = {};
 
       // 参数描述（优先级较低）
       Object.entries(payloadData).forEach(([key, v]) => {
