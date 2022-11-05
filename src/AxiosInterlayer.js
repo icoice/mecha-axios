@@ -355,9 +355,9 @@ export default class AxiosInterlayer {
     if (paramsSetDefault && is(data, 'undefined') && is(paramMap, 'array') && paramMap.length > 0) {
       paramMap.forEach(param => {
         if (is(param, 'object')) {
-          nextData[param.name] = param.default || paramsSetDefaultValue;
+            nextData[param.name] = !is(param.default, 'undefined') ? param.default : paramsSetDefaultValue;
 
-          return param;
+            return param;
         }
 
         nextData[param] = paramsSetDefaultValue;
@@ -370,18 +370,24 @@ export default class AxiosInterlayer {
 
     // data为object时
     paramMap.forEach(param => {
-      if (!is(param, 'object')) {
-        if (paramsSetDefault && is(data[param], 'undefined')) {
-          nextData[param] = paramsSetDefaultValue;
-        } else if (!is(data[param], 'undefined')) {
-          nextData[param] = data[param];
+        if (!is(param, 'object')) {
+            if (paramsSetDefault && is(data[param], 'undefined')) {
+                nextData[param] = paramsSetDefaultValue;
+            } else if (!is(data[param], 'undefined')) {
+                nextData[param] = data[param];
+            }
+
+            return param;
         }
 
-        return param;
-      }
-
-      // 存在别名时，从别名中取值，否在在原名中取值，都不存在值时从默认值从取值
-      nextData[param.name] = data[param.aliasName] || data[param.name] || param.default;
+        // 存在别名时，从别名中取值，否则在原名中取值，都不存在值时从默认值从取值
+        if (!is(data[param.aliasName], 'undefined')) {
+            nextData[param.name] = data[param.aliasName];
+        } else if (!is(data[param.name], 'undefined')) {
+            nextData[param.name] = data[param.name];
+        } else {
+            nextData[param.name] = param.default || paramsSetDefaultValue;
+        }
     });
 
     return nextData;
