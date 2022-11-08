@@ -390,6 +390,7 @@ export default class AxiosInterlayer {
         }
 
         // 单个字段，假设值为空时，空值要求为null, 而非空字符时的处理
+        // 这里主要处理关联字段置空时，需为null的场合
         if ([paramsSetDefaultValue, ''].includes(nextData[param.name]) && param.emptyValueReturnNull) {
             nextData[param.name] = null;
         }
