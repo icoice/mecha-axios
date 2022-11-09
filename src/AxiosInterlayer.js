@@ -273,7 +273,7 @@ export default class AxiosInterlayer {
 
       // 依据协议方法选择报文通道
       if (!['GET', 'DELETE'].includes(method)) sendQuery = {};
-        if (!['POST', 'PUT'].includes(method)) sendBody = {};
+      if (!['POST', 'PUT'].includes(method)) sendBody = {};
 
       // 参数描述（优先级较低）
       Object.entries(payloadData).forEach(([key, v]) => {
@@ -389,9 +389,42 @@ export default class AxiosInterlayer {
             nextData[param.name] = param.default || paramsSetDefaultValue;
         }
 
+        // 类型转换
+        if (!is(nextData[param.name], null) && !is(nextData[param.name], 'undefined')) {
+            switch (param.dataType) {
+                case 'number': 
+                    nextData[param.name] = Number(nextData[param.name])
+                    break;
+                case 'string':
+                    nextData[param.name] = String(nextData[param.name])
+                    break;
+                case 'timestamp':
+                    nextData[param.name] = (new Date(nextData[param.name])).getTime()
+                    break;
+                case 'date':
+                    const date = new Date(nextData[param.name])
+                    const y = date.getFullYear()
+                    let m = date.getMonth() + 1
+                    let d = date.getDate()
+                    let h = date.getHours()
+                    let i = date.getMinutes()
+                    let s = date.getSeconds()
+    
+                    m = m < 10 ? '0' + m : m
+                    d = d < 10 ? '0' + d : d
+                    h = h < 10 ? '0' + h : h
+                    i = i < 10 ? '0' + i : i
+                    s = s < 10 ? '0' + s : s
+    
+                    nextData[param.name] = `${y}-${m}-${d} ${h}:${i}:${s}`
+                    break;
+                default:
+            }
+        }
+
         // 单个字段，假设值为空时，空值要求为null, 而非空字符时的处理
         // 这里主要处理关联字段置空时，需为null的场合
-        if ([paramsSetDefaultValue, ''].includes(nextData[param.name]) && param.emptyValueReturnNull) {
+        if ([paramsSetDefaultValue, '', undefined].includes(nextData[param.name]) && param.emptyValueReturnNull) {
             nextData[param.name] = null;
         }
     });
