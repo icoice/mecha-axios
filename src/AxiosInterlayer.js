@@ -427,6 +427,11 @@ export default class AxiosInterlayer {
         if ([paramsSetDefaultValue, '', undefined].includes(nextData[param.name]) && param.emptyValueReturnNull) {
             nextData[param.name] = null;
         }
+
+        // 省略非必要上传字段
+        if ([paramsSetDefaultValue, '', undefined, null].includes(nextData[param.name]) && param.dispensable) {
+            delete nextData[param.name];
+        }
     });
 
     return nextData;
