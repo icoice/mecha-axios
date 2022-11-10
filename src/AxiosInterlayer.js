@@ -390,7 +390,7 @@ export default class AxiosInterlayer {
         }
 
         // 类型转换
-        if (!is(nextData[param.name], null) && !is(nextData[param.name], 'undefined')) {
+        if (!is(nextData[param.name], null) && !is(nextData[param.name], 'undefined') && !is(nextData[param.name], '')) {
             switch (param.dataType) {
                 case 'number': 
                     nextData[param.name] = Number(nextData[param.name])
