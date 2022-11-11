@@ -32,8 +32,12 @@ export const dateFormat = params => {
     return `${y}-${m}-${d} ${h}:${i}:${s}`
 }
 
+export const timestamp = param => {
+    return (new Date(param)).getTime()
+}
+
 export const today = key => {
-    const date = new Date(params)
+    const date = new Date()
     const y = date.getFullYear()
     let m = date.getMonth() + 1
     let d = date.getDate()

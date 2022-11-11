@@ -1,7 +1,7 @@
 import axios from 'axios';
 import AbortController from 'abort-controller/dist/abort-controller.mjs';
 import FormDataNode from 'form-data';
-import { def, is, dateFormat, today } from './common';
+import { def, is, dateFormat, today, timestamp } from './common';
 
 export default class AxiosInterlayer {
   constructor(options = {}) {
@@ -344,10 +344,53 @@ export default class AxiosInterlayer {
     return requestParams;
   }
 
-  // 处理payload
+  // 处理payload, 类型转换
   resetPayloadData(data, paramMap = []) {
     const { paramsSetDefault, paramsSetDefaultValue } = this;
+    const needChagneTypes = ['todayStart', 'todayEnd', 'today-start', 'today-end'];
+    const canNotChagneTypes = [null, '', undefined];
     const nextData = {};
+    const changeDataType = param => {
+        switch (param.dataType) {
+            case 'number': 
+                nextData[param.name] = Number(nextData[param.name]);
+                break;
+            case 'string':
+                nextData[param.name] = String(nextData[param.name]);
+                break;
+            case 'timestamp':
+                nextData[param.name] = timestamp(new Date(nextData[param.name]));
+                break;
+            case 'date':
+                nextData[param.name] = dateFormat(nextData[param.name]);
+                break;
+            case 'todayStart':
+                nextData[param.name] = today('start');
+                break;
+            case 'todayStartTimestamp':
+                nextData[param.name] = timestamp(today('start'));
+                break;
+            case 'todayEnd':
+                nextData[param.name] = today('end');
+                break;
+            case 'todayEndTimestamp':
+                nextData[param.name] = timestamp(today('end'));
+                break;
+            case 'today-start':
+                nextData[param.name] = today('start');
+                break;
+            case 'today-start-timestamp':
+                nextData[param.name] = timestamp(today('start'));
+                break;
+            case 'today-end':
+                nextData[param.name] = today('end');
+                break;
+            case 'today-end-timestamp':
+                nextData[param.name] = timestamp(today('end'));
+                break;
+            default:
+        }
+    }
 
     if (is(data, File)) return data;
 
@@ -357,10 +400,18 @@ export default class AxiosInterlayer {
         if (is(param, 'object')) {
             nextData[param.name] = !is(param.default, 'undefined') ? param.default : paramsSetDefaultValue;
 
+            if (!canNotChagneTypes.includes(nextData[param.name]) || needChagneTypes.includes(param.dataType)) {
+                changeDataType(param);
+            }
+
             return param;
         }
 
         nextData[param] = paramsSetDefaultValue;
+
+        if (!canNotChagneTypes.includes(nextData[param.name]) || needChagneTypes.includes(param.dataType)) {
+            changeDataType(param);
+        }
       });
 
       return nextData;
@@ -389,35 +440,8 @@ export default class AxiosInterlayer {
             nextData[param.name] = param.default || paramsSetDefaultValue;
         }
 
-        // 类型转换
-        if (!is(nextData[param.name], null) && !is(nextData[param.name], 'undefined') && !is(nextData[param.name], '')) {
-            switch (param.dataType) {
-                case 'number': 
-                    nextData[param.name] = Number(nextData[param.name])
-                    break;
-                case 'string':
-                    nextData[param.name] = String(nextData[param.name])
-                    break;
-                case 'timestamp':
-                    nextData[param.name] = (new Date(nextData[param.name])).getTime()
-                    break;
-                case 'date':
-                    nextData[param.name] = dateFormat(nextData[param.name])
-                    break;
-                case 'todayStart':
-                    nextData[param.name] = today('start')
-                    break;
-                case 'todayEnd':
-                    nextData[param.name] = today('end')
-                    break;
-                case 'today-start':
-                    nextData[param.name] = today('start')
-                    break;
-                case 'today-end':
-                    nextData[param.name] = today('end')
-                    break;
-                default:
-            }
+        if (!canNotChagneTypes.includes(nextData[param.name]) || needChagneTypes.includes(param.dataType)) {
+            changeDataType(param);
         }
 
         // 单个字段，假设值为空时，空值要求为null, 而非空字符时的处理
