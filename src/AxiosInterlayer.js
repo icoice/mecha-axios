@@ -1,7 +1,7 @@
 import axios from 'axios';
 import AbortController from 'abort-controller/dist/abort-controller.mjs';
 import FormDataNode from 'form-data';
-import { def, is } from './common';
+import { def, is, dateFormat, today } from './common';
 
 export default class AxiosInterlayer {
   constructor(options = {}) {
@@ -402,21 +402,19 @@ export default class AxiosInterlayer {
                     nextData[param.name] = (new Date(nextData[param.name])).getTime()
                     break;
                 case 'date':
-                    const date = new Date(nextData[param.name])
-                    const y = date.getFullYear()
-                    let m = date.getMonth() + 1
-                    let d = date.getDate()
-                    let h = date.getHours()
-                    let i = date.getMinutes()
-                    let s = date.getSeconds()
-    
-                    m = m < 10 ? '0' + m : m
-                    d = d < 10 ? '0' + d : d
-                    h = h < 10 ? '0' + h : h
-                    i = i < 10 ? '0' + i : i
-                    s = s < 10 ? '0' + s : s
-    
-                    nextData[param.name] = `${y}-${m}-${d} ${h}:${i}:${s}`
+                    nextData[param.name] = dateFormat(nextData[param.name])
+                    break;
+                case 'todayStart':
+                    nextData[param.name] = today('start')
+                    break;
+                case 'todayEnd':
+                    nextData[param.name] = today('end')
+                    break;
+                case 'today-start':
+                    nextData[param.name] = today('start')
+                    break;
+                case 'today-end':
+                    nextData[param.name] = today('end')
                     break;
                 default:
             }

@@ -1,6 +1,6 @@
 {
   "name": "mecha-axios",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "global api",
   "main": "lib/index.js",
   "scripts": {
