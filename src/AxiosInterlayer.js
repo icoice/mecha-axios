@@ -347,9 +347,26 @@ export default class AxiosInterlayer {
   // 处理payload, 类型转换
   resetPayloadData(data, paramMap = []) {
     const { paramsSetDefault, paramsSetDefaultValue } = this;
-    const needChagneTypes = ['todayStart', 'todayEnd', 'today-start', 'today-end'];
-    const canNotChagneTypes = [null, '', undefined];
+
+    const needChagneTypes = [
+        'todayStart',
+        'todayEnd',
+        'todayStartTimestamp',
+        'todayEndTimestamp',
+        'today-start',
+        'today-end',
+        'today-start-timestamp',
+        'today-end-timestamp',
+    ];
+
+    const canNotChagneTypes = [
+        null,
+        '',
+        undefined,
+    ];
+
     const nextData = {};
+
     const changeDataType = param => {
         switch (param.dataType) {
             case 'number': 
