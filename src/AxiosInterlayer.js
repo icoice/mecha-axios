@@ -345,9 +345,8 @@ export default class AxiosInterlayer {
   }
 
   // 处理payload, 类型转换
-  resetPayloadData(data, paramMap = []) {
+  resetPayloadData(data = {}, paramMap = []) {
     const { paramsSetDefault, paramsSetDefaultValue } = this;
-
     const needChagneTypes = [
         'todayStart',
         'todayEnd',
@@ -358,15 +357,8 @@ export default class AxiosInterlayer {
         'today-start-timestamp',
         'today-end-timestamp',
     ];
-
-    const canNotChagneTypes = [
-        null,
-        '',
-        undefined,
-    ];
-
+    const canNotChagneTypes = [null, '', undefined];
     const nextData = {};
-
     const changeDataType = param => {
         switch (param.dataType) {
             case 'number': 
@@ -434,7 +426,7 @@ export default class AxiosInterlayer {
       return nextData;
     }
 
-    if (!is(data, 'object') || !is(paramMap, 'array')) return data;
+    if (!is(data, 'object') || !is(paramMap, 'array')) return nextData;
 
     // data为object时
     paramMap.forEach(param => {

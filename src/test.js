@@ -86,6 +86,22 @@ const api = new MechaAxios({
       },
     },
     {
+        name: "updateUser",
+        method: "PATCH",
+        path: "/get/user/:${id}",
+        paramMap: [
+          "type",
+          "date",
+          { name: "id", type:"path" },
+          { name: "pid", default: 1, type: "query" },
+        ],
+        fake: {
+          code: 500,
+          message: "fail",
+          data: {},
+        },
+      },
+    {
       name: "getUserAge",
       method: "GET",
       path: "/get/user/age",
@@ -109,6 +125,8 @@ const api = new MechaAxios({
   ],
 });
 
+api.updateUser({ id: 7649, type: 'xxxx' })
+console.log("---------- \n");
 api.getUser({ userId: 7649 });
 api.getUser({ id: 7649 });
 console.log("---------- \n");
