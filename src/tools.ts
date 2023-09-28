@@ -1,4 +1,4 @@
-export const is = (v, t = '') => {
+export const is = (v: any, t: any = ''): Boolean => {
     if (t === 'object') return typeof v === 'object' && v !== null && !(v instanceof Array);
     if (t === 'promise' || t === Promise) return v instanceof Promise || (typeof v === 'object' && v !== null && typeof v.then === 'function' && typeof v.catch === 'function');
     if (t === 'null' || t === null) return v === null;
@@ -10,18 +10,16 @@ export const is = (v, t = '') => {
     return typeof v === t;
 }
 
-export const def = (v, d) => is(v, 'undefined') ? d : v;
-export const loop = (v, cb = () => { }) => Object.entries(v).map(([k, v]) => cb(v, k));
-export const empty = v => (v === '' || v === null || JSON.stringify(v) === '{}' || JSON.stringify(v) === '[]' || is(v, 'undefined'));
+export const def = (v: any, d: any) => is(v, 'undefined') ? d : v;
 
 export const dateFormat = params => {
     const date = new Date(params)
     const y = date.getFullYear()
-    let m = date.getMonth() + 1
-    let d = date.getDate()
-    let h = date.getHours()
-    let i = date.getMinutes()
-    let s = date.getSeconds()
+    let m: any = date.getMonth() + 1
+    let d: any = date.getDate()
+    let h: any = date.getHours()
+    let i: any = date.getMinutes()
+    let s: any = date.getSeconds()
 
     m = m < 10 ? '0' + m : m
     d = d < 10 ? '0' + d : d
@@ -39,8 +37,8 @@ export const timestamp = param => {
 export const today = key => {
     const date = new Date()
     const y = date.getFullYear()
-    let m = date.getMonth() + 1
-    let d = date.getDate()
+    let m: any = date.getMonth() + 1
+    let d: any = date.getDate()
 
     m = m < 10 ? '0' + m : m
     d = d < 10 ? '0' + d : d

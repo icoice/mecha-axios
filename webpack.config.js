@@ -1,21 +1,25 @@
 /* eslint-env node */
+require('dotenv').config();
+
 const path = require('path');
 const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 
 module.exports = {
-    target: ['node'].includes(process.env.BUILD_ENV) ? 'node' : 'web',
     mode: 'production',
     entry: {
-        main: './src/index.js',
+        main: './main.ts',
     },
     output: {
-        path: path.resolve(process.cwd(), './lib'),
         clean: false,
-        filename: `index${process.env.BUILD_ENV || process.env.PACK_TYPE ? `.${process.env.BUILD_ENV || process.env.PACK_TYPE}` : ''}.js`,
+        filename: `index.${process.env.WEBPACK_OUTPUT_TYPE}${process.env.BUILD_ENV ? `.${process.env.BUILD_ENV}` : ''}.js`,
+        path: path.resolve(process.cwd(), './lib'),
         library: {
-            name: 'MechaAxios',
-            type: !process.env.PACK_TYPE ? 'umd' : process.env.PACK_TYPE,
+            type: process.env.WEBPACK_OUTPUT_TYPE,
         },
+    },
+    devtool: "source-map",
+    resolve: {
+        extensions: ['.js', '.ts', '.tsx', '.json'],
     },
     externalsPresets: { node: true },
     optimization: {
@@ -36,6 +40,11 @@ module.exports = {
                 }
                 }
             },
+            {
+                test: /\.tsx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/
+            }
         ], 
     },
     plugins: [
